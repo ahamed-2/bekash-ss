@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>bKash Slip Generator</title>
+
+<style>
+    body { text-align: center; font-family: sans-serif; background:#f2f2f2; }
+    input { margin: 6px; padding: 10px; font-size: 18px; width: 260px; }
+    button {
+        padding: 12px 20px; font-size: 18px;
+        cursor: pointer; background: #e4006f; color: white; border: none; border-radius: 6px;
+    }
+    a { font-size: 20px; margin-top: 15px; display:block; }
+</style>
+</head>
+<body>
+
+<h2>bKash Slip Generator</h2>
+
+<input type="text" id="number" placeholder="Mobile Number"><br>
+<input type="text" id="trx" placeholder="Transaction ID"><br>
+<input type="number" id="amount" placeholder="Amount"><br>
+
+<br>
+<button onclick="generate()">Generate</button>
+
+<br><br>
+<canvas id="canvas" width="1080" height="2340" style="display:none;"></canvas>
+<a id="download" style="display:none;">Download Image</a>
+
+<script>
+// Load custom fonts
+const roboto = new FontFace('Roboto', 'url(roboto.ttf)');
+const roboto2 = new FontFace('Roboto2', 'url(roboto2.ttf)');
+document.fonts.add(roboto);
+document.fonts.add(roboto2);
+roboto.load();
+roboto2.load();
+
+function generate() {
+    const number = document.getElementById("number").value || "01986833907";
+    const trx = document.getElementById("trx").value || "730MGQG6GH";
+    const amount = parseInt(document.getElementById("amount").value) || 10000;
+
+    const totalPlus = amount + 17;
+    const now = new Date();
+    const time = now.toLocaleString("bn-BD", { hour: "2-digit", minute: "2-digit" });
+    const date = now.toLocaleDateString("bn-BD");
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const img = new Image();
+    img.src = "ss.jpg";
+
+    img.onload = function () {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgb(90, 90, 90)";
+
+        ctx.font = "55px Roboto";
+        ctx.fillText(number, 400, 850);
+        ctx.fillText(number, 400, 950);
+
+        ctx.font = "60px Roboto";
+        const trxWidth = ctx.measureText(trx).width;
+        ctx.fillText(trx, canvas.width - 384 - trxWidth, 1430);
+
+        ctx.font = "50px Roboto2";
+        ctx.fillText(amount + " +17.39", 175, 1880);
+
+        ctx.font = "50px Roboto";
+        ctx.fillText(totalPlus, 170, 1768);
+
+        ctx.fillText(time, 135, 1421);
+        ctx.fillText(date, 439, 1420);
+
+        const link = document.getElementById("download");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "bKash_slip.png";
+        link.style.display = "block";
+        link.textContent = "Download Image";
+    };
+}
+</script>
+
+</body>
+</html>
